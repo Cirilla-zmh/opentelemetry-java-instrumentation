@@ -25,6 +25,8 @@ dependencies {
   compileOnly("io.projectreactor:reactor-core:3.4.0")
   implementation(project(":instrumentation:reactor:reactor-3.1:library"))
 
+  bootstrap(project(":instrumentation:reactor:reactor-3.1:bootstrap"))
+
   implementation(project(":instrumentation:opentelemetry-api:opentelemetry-api-1.0:javaagent"))
 
   compileOnly(project(":javaagent-tooling"))
