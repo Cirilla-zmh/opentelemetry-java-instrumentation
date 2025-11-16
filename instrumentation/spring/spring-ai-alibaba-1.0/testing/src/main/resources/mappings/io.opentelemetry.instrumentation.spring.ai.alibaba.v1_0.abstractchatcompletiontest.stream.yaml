@@ -1,0 +1,63 @@
+---
+id: 286db6b3-ecb6-435e-96b1-312f44f29cd8
+name: api_v1_services_aigc_text-generation_generation
+request:
+  url: /api/v1/services/aigc/text-generation/generation
+  method: POST
+  bodyPatterns:
+  - equalToJson: |-
+      {
+        "model" : "qwen3-coder-flash",
+        "input" : {
+          "messages" : [ {
+            "content" : "Answer in up to 3 words: Which ocean contains Bouvet Island?",
+            "role" : "user"
+          } ]
+        },
+        "parameters" : {
+          "result_format" : "message",
+          "temperature" : 0.7,
+          "enable_search" : false,
+          "incremental_output" : true,
+          "stream" : true,
+          "enable_thinking" : false
+        },
+        "stream" : true
+      }
+    ignoreArrayOrder: false
+    ignoreExtraElements: false
+response:
+  status: 200
+  body: |+
+    id:1
+    event:result
+    :HTTP_STATUS/200
+    data:{"output":{"choices":[{"message":{"content":"Southern","role":"assistant"},"finish_reason":"null"}]},"usage":{"total_tokens":24,"output_tokens":1,"input_tokens":23,"cached_tokens":0},"request_id":"7530a375-ae02-4314-b277-0ee045506487"}
+
+    id:2
+    event:result
+    :HTTP_STATUS/200
+    data:{"output":{"choices":[{"message":{"content":" Ocean","role":"assistant"},"finish_reason":"null"}]},"usage":{"total_tokens":25,"output_tokens":2,"input_tokens":23,"cached_tokens":0},"request_id":"7530a375-ae02-4314-b277-0ee045506487"}
+
+    id:3
+    event:result
+    :HTTP_STATUS/200
+    data:{"output":{"choices":[{"message":{"content":"","role":"assistant"},"finish_reason":"stop"}]},"usage":{"total_tokens":25,"output_tokens":2,"input_tokens":23,"cached_tokens":0},"request_id":"7530a375-ae02-4314-b277-0ee045506487"}
+
+  headers:
+    vary: "Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
+    x-request-id: 7530a375-ae02-4314-b277-0ee045506487
+    content-type: text/event-stream;charset=UTF-8
+    x-dashscope-call-gateway: "true"
+    x-dashscope-timeout: "298"
+    x-dashscope-finished: "false"
+    req-cost-time: "213"
+    req-arrive-time: "1758095653947"
+    resp-start-time: "1758095654161"
+    x-envoy-upstream-service-time: "209"
+    set-cookie: acw_tc=7530a375-ae02-4314-b277-0ee045506487681d7e6ccdff1ec4446b3724c7215203;path=/;HttpOnly;Max-Age=1800
+    date: "Wed, 17 Sep 2025 07:54:13 GMT"
+    server: istio-envoy
+uuid: 286db6b3-ecb6-435e-96b1-312f44f29cd8
+persistent: true
+insertionIndex: 9

@@ -1,0 +1,59 @@
+---
+id: 96d045dc-3505-41e5-bf9b-45a50c23798b
+name: api_v1_services_aigc_text-generation_generation
+request:
+  url: /api/v1/services/aigc/text-generation/generation
+  method: POST
+  bodyPatterns:
+  - equalToJson: |-
+      {
+        "model" : "qwen3-coder-flash",
+        "input" : {
+          "messages" : [ {
+            "content" : "Answer in up to 3 words: Which ocean contains Bouvet Island?",
+            "role" : "user"
+          } ]
+        },
+        "parameters" : {
+          "result_format" : "message",
+          "seed" : 100,
+          "max_tokens" : 1000,
+          "top_p" : 1,
+          "top_k" : 3,
+          "temperature" : 0.8,
+          "stop" : [ "foo" ],
+          "enable_search" : false,
+          "response_format" : {
+            "type" : "text"
+          },
+          "incremental_output" : false,
+          "stream" : false,
+          "enable_thinking" : false
+        },
+        "stream" : false
+      }
+    ignoreArrayOrder: false
+    ignoreExtraElements: false
+response:
+  status: 200
+  body: "{\"output\":{\"choices\":[{\"finish_reason\":\"stop\",\"message\":{\"content\"\
+    :\"Southern Ocean\",\"role\":\"assistant\"}}]},\"usage\":{\"cached_tokens\":0,\"\
+    input_tokens\":23,\"output_tokens\":2,\"total_tokens\":25},\"request_id\":\"e5883c7f-4f40-4805-acf8-d356492669db\"\
+    }"
+  headers:
+    vary: "Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding"
+    content-type: application/json
+    x-request-id: e5883c7f-4f40-4805-acf8-d356492669db
+    x-dashscope-call-gateway: "true"
+    x-dashscope-finished: "true"
+    x-dashscope-timeout: "298"
+    req-cost-time: "201"
+    req-arrive-time: "1758098630622"
+    resp-start-time: "1758098630824"
+    x-envoy-upstream-service-time: "194"
+    set-cookie: acw_tc=e5883c7f-4f40-4805-acf8-d356492669dbe160f425fa6b3c75f634ba2976f26af1;path=/;HttpOnly;Max-Age=1800
+    date: "Wed, 17 Sep 2025 08:43:50 GMT"
+    server: istio-envoy
+uuid: 96d045dc-3505-41e5-bf9b-45a50c23798b
+persistent: true
+insertionIndex: 6

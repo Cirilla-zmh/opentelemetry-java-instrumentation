@@ -1,0 +1,50 @@
+id: cd41eed6-bda5-4d5a-b10c-1ddc072a5081
+name: api_v1_services_aigc_text-generation_generation
+request:
+  url: /api/v1/services/aigc/text-generation/generation
+  method: POST
+  bodyPatterns:
+  - equalToJson: |-
+      {
+        "model" : "qwen3-coder-flash",
+        "input" : {
+          "messages" : [ {
+            "content" : "Answer in up to 3 words: Which ocean contains Bouvet Island?",
+            "role" : "user"
+          } ]
+        },
+        "parameters" : {
+          "result_format" : "message",
+          "temperature" : 0.7,
+          "enable_search" : false,
+          "incremental_output" : false,
+          "stream" : false,
+          "enable_thinking" : false
+        },
+        "stream" : false
+      }
+    ignoreArrayOrder: false
+    ignoreExtraElements: false
+response:
+  status: 200
+  body: "{\"output\":{\"choices\":[{\"finish_reason\":\"stop\",\"message\":{\"content\"\
+    :\"South Atlantic\",\"role\":\"assistant\"}}]},\"usage\":{\"cached_tokens\":0,\"\
+    input_tokens\":23,\"output_tokens\":2,\"total_tokens\":25},\"request_id\":\"1d3c91df-e4ff-4683-9d35-287b62dcb9b9\"\
+    }"
+  headers:
+    vary: "Origin,Access-Control-Request-Method,Access-Control-Request-Headers, Accept-Encoding"
+    content-type: application/json
+    x-request-id: 1d3c91df-e4ff-4683-9d35-287b62dcb9b9
+    x-dashscope-call-gateway: "true"
+    x-dashscope-finished: "true"
+    x-dashscope-timeout: "298"
+    req-cost-time: "262"
+    req-arrive-time: "1758096264816"
+    resp-start-time: "1758096265079"
+    x-envoy-upstream-service-time: "254"
+    set-cookie: acw_tc=1d3c91df-e4ff-4683-9d35-287b62dcb9b9e902faf12437bd70cb715b1847437c73;path=/;HttpOnly;Max-Age=1800
+    date: "Wed, 17 Sep 2025 08:04:24 GMT"
+    server: istio-envoy
+uuid: cd41eed6-bda5-4d5a-b10c-1ddc072a5081
+persistent: true
+insertionIndex: 12

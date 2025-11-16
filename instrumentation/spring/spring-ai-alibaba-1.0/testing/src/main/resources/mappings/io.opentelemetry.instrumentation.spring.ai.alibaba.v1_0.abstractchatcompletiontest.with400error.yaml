@@ -1,0 +1,50 @@
+---
+id: c0b4789f-11da-4640-9bea-d24d8ae7192f
+name: api_v1_services_aigc_text-generation_generation
+request:
+  url: /api/v1/services/aigc/text-generation/generation
+  method: POST
+  bodyPatterns:
+  - equalToJson: |-
+      {
+        "model" : "gpt-4o",
+        "input" : {
+          "messages" : [ {
+            "content" : "Answer in up to 3 words: Which ocean contains Bouvet Island?",
+            "role" : "user"
+          } ]
+        },
+        "parameters" : {
+          "result_format" : "message",
+          "temperature" : 0.7,
+          "enable_search" : false,
+          "incremental_output" : true,
+          "stream" : true,
+          "enable_thinking" : false
+        },
+        "stream" : true
+      }
+    ignoreArrayOrder: false
+    ignoreExtraElements: false
+response:
+  status: 400
+  body: |+
+    id:1
+    event:error
+    :HTTP_STATUS/400 BAD_REQUEST
+    data:{"request_id":"2e06b75e-8354-46b1-9c85-f620901e4752","code":"InvalidParameter","message":"Model not exist."}
+
+  headers:
+    vary: "Origin,Access-Control-Request-Method,Access-Control-Request-Headers"
+    x-request-id: 2e06b75e-8354-46b1-9c85-f620901e4752
+    content-type: text/event-stream;charset=UTF-8
+    req-cost-time: "11"
+    req-arrive-time: "1758099174775"
+    resp-start-time: "1758099174787"
+    x-envoy-upstream-service-time: "3"
+    set-cookie: acw_tc=2e06b75e-8354-46b1-9c85-f620901e4752404baa54433e90f3779bd3cbebe360ee;path=/;HttpOnly;Max-Age=1800
+    date: "Wed, 17 Sep 2025 08:52:54 GMT"
+    server: istio-envoy
+uuid: c0b4789f-11da-4640-9bea-d24d8ae7192f
+persistent: true
+insertionIndex: 10
