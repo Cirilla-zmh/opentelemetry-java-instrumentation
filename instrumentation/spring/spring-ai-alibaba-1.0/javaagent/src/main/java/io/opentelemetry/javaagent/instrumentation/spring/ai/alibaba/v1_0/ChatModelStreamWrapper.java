@@ -1,3 +1,8 @@
+/*
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package io.opentelemetry.javaagent.instrumentation.spring.ai.alibaba.v1_0;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionChunk;
@@ -14,16 +19,17 @@ public final class ChatModelStreamWrapper {
       ChatModelStreamListener streamListener,
       Context context) {
 
-    Flux<ChatCompletionChunk> chatCompletionChunkFlux = originFlux.doOnNext(
-            chunk -> streamListener.onChunk(chunk))
-        .doOnComplete(() -> streamListener.endSpan(null))
-        .doOnError(streamListener::endSpan);
+    Flux<ChatCompletionChunk> chatCompletionChunkFlux =
+        originFlux
+            .doOnNext(chunk -> streamListener.onChunk(chunk))
+            .doOnComplete(() -> streamListener.endSpan(null))
+            .doOnError(streamListener::endSpan);
     return ContextPropagationOperator.runWithContext(chatCompletionChunkFlux, context);
   }
 
   public static Flux<ChatResponse> enableContextPropagation(Flux<ChatResponse> originFlux) {
-    return originFlux
-        .contextWrite(ctx -> ctx.put(ReactorSubscribeOnProcessTracing.CONTEXT_PROPAGATION_KEY, true));
+    return originFlux.contextWrite(
+        ctx -> ctx.put(ReactorSubscribeOnProcessTracing.CONTEXT_PROPAGATION_KEY, true));
   }
 
   private ChatModelStreamWrapper() {}

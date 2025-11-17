@@ -1,6 +1,11 @@
+/*
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package io.opentelemetry.javaagent.instrumentation.spring.ai.v1_0.tool;
 
-import io.opentelemetry.instrumentation.api.instrumenter.genai.tool.GenAiToolAttributesGetter;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.tool.GenAiToolAttributesGetter;
 import javax.annotation.Nullable;
 
 public enum ToolCallAttributesGetter implements GenAiToolAttributesGetter<ToolCallRequest, String> {

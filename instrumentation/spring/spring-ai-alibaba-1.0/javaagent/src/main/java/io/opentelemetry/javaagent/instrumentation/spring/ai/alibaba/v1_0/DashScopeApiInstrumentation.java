@@ -1,3 +1,8 @@
+/*
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package io.opentelemetry.javaagent.instrumentation.spring.ai.alibaba.v1_0;
 
 import static io.opentelemetry.javaagent.extension.matcher.AgentElementMatchers.hasClassesNamed;
@@ -38,14 +43,24 @@ public class DashScopeApiInstrumentation implements TypeInstrumentation {
   @Override
   public void transform(TypeTransformer transformer) {
     transformer.applyAdviceToMethod(
-        isMethod().and(named("chatCompletionEntity")).and(takesArguments(2))
-            .and(takesArgument(0, named("com.alibaba.cloud.ai.dashscope.api.DashScopeApi$ChatCompletionRequest")))
+        isMethod()
+            .and(named("chatCompletionEntity"))
+            .and(takesArguments(2))
+            .and(
+                takesArgument(
+                    0,
+                    named("com.alibaba.cloud.ai.dashscope.api.DashScopeApi$ChatCompletionRequest")))
             .and(returns(named("org.springframework.http.ResponseEntity"))),
         this.getClass().getName() + "$CallAdvice");
 
     transformer.applyAdviceToMethod(
-        isMethod().and(named("chatCompletionStream")).and(takesArguments(2))
-            .and(takesArgument(0, named("com.alibaba.cloud.ai.dashscope.api.DashScopeApi$ChatCompletionRequest")))
+        isMethod()
+            .and(named("chatCompletionStream"))
+            .and(takesArguments(2))
+            .and(
+                takesArgument(
+                    0,
+                    named("com.alibaba.cloud.ai.dashscope.api.DashScopeApi$ChatCompletionRequest")))
             .and(returns(named("reactor.core.publisher.Flux"))),
         this.getClass().getName() + "$StreamAdvice");
   }
@@ -79,7 +94,8 @@ public class DashScopeApiInstrumentation implements TypeInstrumentation {
       }
       scope.close();
 
-      TELEMETRY.chatCompletionInstrumenter()
+      TELEMETRY
+          .chatCompletionInstrumenter()
           .end(context, request, response.hasBody() ? response.getBody() : null, throwable);
     }
   }
@@ -93,12 +109,16 @@ public class DashScopeApiInstrumentation implements TypeInstrumentation {
         @Advice.Local("otelContext") Context context,
         @Advice.Local("otelStreamListener") ChatModelStreamListener streamListener) {
       context = Context.current();
-      
+
       if (TELEMETRY.chatCompletionInstrumenter().shouldStart(context, request)) {
         context = TELEMETRY.chatCompletionInstrumenter().start(context, request);
-        streamListener = new ChatModelStreamListener(
-            context, request, TELEMETRY.chatCompletionInstrumenter(),
-            TELEMETRY.messageCaptureOptions(), true);
+        streamListener =
+            new ChatModelStreamListener(
+                context,
+                request,
+                TELEMETRY.chatCompletionInstrumenter(),
+                TELEMETRY.messageCaptureOptions(),
+                true);
       }
     }
 

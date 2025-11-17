@@ -1,3 +1,8 @@
+/*
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package io.opentelemetry.javaagent.instrumentation.spring.ai.alibaba.v1_0;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletion;
@@ -5,20 +10,20 @@ import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionMessage;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionMessage.ToolCall;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionOutput.Choice;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionRequest;
-import io.opentelemetry.instrumentation.api.genai.MessageCaptureOptions;
-import io.opentelemetry.instrumentation.api.genai.messages.InputMessage;
-import io.opentelemetry.instrumentation.api.genai.messages.InputMessages;
-import io.opentelemetry.instrumentation.api.genai.messages.MessagePart;
-import io.opentelemetry.instrumentation.api.genai.messages.OutputMessage;
-import io.opentelemetry.instrumentation.api.genai.messages.OutputMessages;
-import io.opentelemetry.instrumentation.api.genai.messages.Role;
-import io.opentelemetry.instrumentation.api.genai.messages.SystemInstructions;
-import io.opentelemetry.instrumentation.api.genai.messages.TextPart;
-import io.opentelemetry.instrumentation.api.genai.messages.ToolCallRequestPart;
-import io.opentelemetry.instrumentation.api.genai.messages.ToolCallResponsePart;
-import io.opentelemetry.instrumentation.api.genai.messages.ToolDefinition;
-import io.opentelemetry.instrumentation.api.genai.messages.ToolDefinitions;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.GenAiMessagesProvider;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiMessagesProvider;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.InputMessage;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.InputMessages;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.MessageCaptureOptions;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.MessagePart;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.OutputMessage;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.OutputMessages;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.Role;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.SystemInstructions;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.TextPart;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.ToolCallRequestPart;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.ToolCallResponsePart;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.ToolDefinition;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.ToolDefinitions;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,7 +48,8 @@ public final class ChatModelMessagesProvider
 
   @Nullable
   @Override
-  public InputMessages inputMessages(ChatCompletionRequest request, @Nullable ChatCompletion response) {
+  public InputMessages inputMessages(
+      ChatCompletionRequest request, @Nullable ChatCompletion response) {
     if (!messageCaptureOptions.captureMessageContent()
         || request.input() == null
         || request.input().messages() == null) {
@@ -57,7 +63,8 @@ public final class ChatModelMessagesProvider
         inputMessages.append(
             InputMessage.create(Role.SYSTEM, contentToMessageParts(msg.rawContent())));
       } else if (msg.role() == ChatCompletionMessage.Role.USER) {
-        inputMessages.append(InputMessage.create(Role.USER, contentToMessageParts(msg.rawContent())));
+        inputMessages.append(
+            InputMessage.create(Role.USER, contentToMessageParts(msg.rawContent())));
       } else if (msg.role() == ChatCompletionMessage.Role.ASSISTANT) {
         List<MessagePart> messageParts = new ArrayList<>();
 
@@ -68,13 +75,14 @@ public final class ChatModelMessagesProvider
 
         List<ToolCall> toolCalls = msg.toolCalls();
         if (toolCalls != null) {
-          messageParts.addAll(toolCalls.stream()
-              .map(this::toolCallToMessagePart)
-              .collect(Collectors.toList()));
+          messageParts.addAll(
+              toolCalls.stream().map(this::toolCallToMessagePart).collect(Collectors.toList()));
         }
         inputMessages.append(InputMessage.create(Role.ASSISTANT, messageParts));
       } else if (msg.role() == ChatCompletionMessage.Role.TOOL) {
-        inputMessages.append(InputMessage.create(Role.TOOL, contentToToolMessageParts(msg.toolCallId(), msg.rawContent())));
+        inputMessages.append(
+            InputMessage.create(
+                Role.TOOL, contentToToolMessageParts(msg.toolCallId(), msg.rawContent())));
       }
     }
     return inputMessages;
@@ -82,7 +90,8 @@ public final class ChatModelMessagesProvider
 
   @Nullable
   @Override
-  public OutputMessages outputMessages(ChatCompletionRequest request, @Nullable ChatCompletion response) {
+  public OutputMessages outputMessages(
+      ChatCompletionRequest request, @Nullable ChatCompletion response) {
     if (!messageCaptureOptions.captureMessageContent()
         || response == null
         || response.output() == null
@@ -102,50 +111,50 @@ public final class ChatModelMessagesProvider
         }
         List<ToolCall> toolCalls = choiceMsg.toolCalls();
         if (toolCalls != null) {
-          messageParts.addAll(toolCalls.stream()
-              .map(this::toolCallToMessagePart)
-              .collect(Collectors.toList()));
+          messageParts.addAll(
+              toolCalls.stream().map(this::toolCallToMessagePart).collect(Collectors.toList()));
         }
       }
 
       outputMessages.append(
           OutputMessage.create(
-              Role.ASSISTANT,
-              messageParts,
-              choice.finishReason().name().toLowerCase()));
+              Role.ASSISTANT, messageParts, choice.finishReason().name().toLowerCase()));
     }
     return outputMessages;
   }
 
   @Nullable
   @Override
-  public SystemInstructions systemInstructions(ChatCompletionRequest request, @Nullable ChatCompletion response) {
+  public SystemInstructions systemInstructions(
+      ChatCompletionRequest request, @Nullable ChatCompletion response) {
     return null;
   }
 
   @Nullable
   @Override
-  public ToolDefinitions toolDefinitions(ChatCompletionRequest request, @Nullable ChatCompletion response) {
+  public ToolDefinitions toolDefinitions(
+      ChatCompletionRequest request, @Nullable ChatCompletion response) {
     if (request.parameters() == null || request.parameters().tools() == null) {
       return null;
     }
 
     ToolDefinitions toolDefinitions = ToolDefinitions.create();
-    request.parameters().tools()
-        .stream()
+    request.parameters().tools().stream()
         .filter(Objects::nonNull)
-        .map(tool -> {
-          if (tool.function() != null) {
-            String name = tool.function().name();
-            String type = tool.type().name().toLowerCase();
-            if (messageCaptureOptions.captureMessageContent() && tool.function().description() != null) {
-              return ToolDefinition.create(type, name, tool.function().description(), null);
-            } else {
-              return ToolDefinition.create(type, name, null, null);
-            }
-          }
-          return null;
-        })
+        .map(
+            tool -> {
+              if (tool.function() != null) {
+                String name = tool.function().name();
+                String type = tool.type().name().toLowerCase();
+                if (messageCaptureOptions.captureMessageContent()
+                    && tool.function().description() != null) {
+                  return ToolDefinition.create(type, name, tool.function().description(), null);
+                } else {
+                  return ToolDefinition.create(type, name, null, null);
+                }
+              }
+              return null;
+            })
         .filter(Objects::nonNull)
         .forEach(toolDefinitions::append);
 
@@ -154,11 +163,12 @@ public final class ChatModelMessagesProvider
 
   /**
    * Support content:
+   *
    * <ul>
-   *   <li>{@code String}</li>
-   *   <li>{@code List<String>}</li>
+   *   <li>{@code String}
+   *   <li>{@code List<String>}
    * </ul>
-   * */
+   */
   private List<MessagePart> contentToMessageParts(Object rawContent) {
     List<MessagePart> messageParts = contentToMessagePartsOrNull(rawContent);
     return messageParts == null ? Collections.singletonList(TextPart.create("")) : messageParts;
@@ -166,11 +176,12 @@ public final class ChatModelMessagesProvider
 
   /**
    * Support content:
+   *
    * <ul>
-   *   <li>{@code String}</li>
-   *   <li>{@code List<String>}</li>
+   *   <li>{@code String}
+   *   <li>{@code List<String>}
    * </ul>
-   * */
+   */
   @SuppressWarnings({"unchecked", "rawtypes"})
   private List<MessagePart> contentToMessagePartsOrNull(Object rawContent) {
     if (rawContent instanceof String && !((String) rawContent).isEmpty()) {
@@ -184,21 +195,24 @@ public final class ChatModelMessagesProvider
 
   private MessagePart toolCallToMessagePart(ToolCall call) {
     if (call != null && call.function() != null) {
-      return ToolCallRequestPart.create(call.id(), call.function().name(), call.function().arguments());
+      return ToolCallRequestPart.create(
+          call.id(), call.function().name(), call.function().arguments());
     }
     return ToolCallRequestPart.create("unknown_function");
   }
 
   /**
    * Support content:
+   *
    * <ul>
-   *   <li>{@code String}</li>
-   *   <li>{@code List<String>}</li>
+   *   <li>{@code String}
+   *   <li>{@code List<String>}
    * </ul>
-   * */
+   */
   private List<MessagePart> contentToToolMessageParts(String toolCallId, Object rawContent) {
     if (rawContent instanceof String && !((String) rawContent).isEmpty()) {
-      return Collections.singletonList(ToolCallResponsePart.create(toolCallId, truncateTextContent((String) rawContent)));
+      return Collections.singletonList(
+          ToolCallResponsePart.create(toolCallId, truncateTextContent((String) rawContent)));
     }
     return Collections.singletonList(ToolCallResponsePart.create(toolCallId));
   }
@@ -212,10 +226,11 @@ public final class ChatModelMessagesProvider
   }
 
   private String truncateTextContent(String content) {
-    if (!content.endsWith(TRUNCATE_FLAG) && content.length() > messageCaptureOptions.maxMessageContentLength()) {
-      content = content.substring(0, messageCaptureOptions.maxMessageContentLength()) + TRUNCATE_FLAG;
+    if (!content.endsWith(TRUNCATE_FLAG)
+        && content.length() > messageCaptureOptions.maxMessageContentLength()) {
+      content =
+          content.substring(0, messageCaptureOptions.maxMessageContentLength()) + TRUNCATE_FLAG;
     }
     return content;
   }
-
 }

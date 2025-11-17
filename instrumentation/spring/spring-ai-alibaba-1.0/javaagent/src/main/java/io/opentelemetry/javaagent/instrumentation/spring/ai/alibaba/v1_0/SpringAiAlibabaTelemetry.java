@@ -8,16 +8,15 @@ package io.opentelemetry.javaagent.instrumentation.spring.ai.alibaba.v1_0;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletion;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionRequest;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.api.genai.MessageCaptureOptions;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.MessageCaptureOptions;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 
-/**
- * Entrypoint for instrumenting Spring AI AlibabaDashScope clients.
- */
+/** Entrypoint for instrumenting Spring AI AlibabaDashScope clients. */
 public final class SpringAiAlibabaTelemetry {
 
   /**
-   * Returns a new {@link SpringAiAlibabaTelemetryBuilder} configured with the given {@link OpenTelemetry}.
+   * Returns a new {@link SpringAiAlibabaTelemetryBuilder} configured with the given {@link
+   * OpenTelemetry}.
    */
   public static SpringAiAlibabaTelemetryBuilder builder(OpenTelemetry openTelemetry) {
     return new SpringAiAlibabaTelemetryBuilder(openTelemetry);
@@ -40,5 +39,4 @@ public final class SpringAiAlibabaTelemetry {
   public MessageCaptureOptions messageCaptureOptions() {
     return messageCaptureOptions;
   }
-
 }

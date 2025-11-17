@@ -20,7 +20,6 @@ public class SpringAiAlibabaInstrumentationModule extends InstrumentationModule 
 
   @Override
   public List<TypeInstrumentation> typeInstrumentations() {
-    return asList(new DashScopeChatModelInstrumentation(),
-        new DashScopeApiInstrumentation());
+    return asList(new DashScopeChatModelInstrumentation(), new DashScopeApiInstrumentation());
   }
 }

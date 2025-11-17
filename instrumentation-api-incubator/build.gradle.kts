@@ -14,6 +14,8 @@ dependencies {
   api("io.opentelemetry.semconv:opentelemetry-semconv")
   api(project(":instrumentation-api"))
   api("io.opentelemetry:opentelemetry-api-incubator")
+  // FIXME find a reasonable approach to import jackson library
+  implementation("com.fasterxml.jackson.core:jackson-databind")
 
   compileOnly("com.google.auto.value:auto-value-annotations")
   annotationProcessor("com.google.auto.value:auto-value")

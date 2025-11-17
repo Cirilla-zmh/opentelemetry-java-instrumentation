@@ -5,13 +5,28 @@
 
 package io.opentelemetry.instrumentation.api.incubator.semconv.genai;
 
-import static io.opentelemetry.api.common.AttributeKey.doubleKey;
-import static io.opentelemetry.api.common.AttributeKey.longKey;
-import static io.opentelemetry.api.common.AttributeKey.stringArrayKey;
-import static io.opentelemetry.api.common.AttributeKey.stringKey;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_CONVERSATION_ID;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_OPERATION_NAME;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_OUTPUT_TYPE;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_PROVIDER_NAME;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_CHOICE_COUNT;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_ENCODING_FORMATS;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_FREQUENCY_PENALTY;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_MAX_TOKENS;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_MODEL;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_PRESENCE_PENALTY;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_SEED;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_STOP_SEQUENCES;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_TEMPERATURE;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_TOP_K;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_REQUEST_TOP_P;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_RESPONSE_FINISH_REASONS;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_RESPONSE_ID;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_RESPONSE_MODEL;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_USAGE_INPUT_TOKENS;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_USAGE_OUTPUT_TOKENS;
 import static io.opentelemetry.instrumentation.api.internal.AttributesExtractorUtil.internalSet;
 
-import io.opentelemetry.api.common.AttributeKey;
 import io.opentelemetry.api.common.AttributesBuilder;
 import io.opentelemetry.context.Context;
 import io.opentelemetry.instrumentation.api.instrumenter.AttributesExtractor;
@@ -27,35 +42,6 @@ import javax.annotation.Nullable;
  */
 public final class GenAiAttributesExtractor<REQUEST, RESPONSE>
     implements AttributesExtractor<REQUEST, RESPONSE> {
-
-  // copied from GenAiIncubatingAttributes
-  static final AttributeKey<String> GEN_AI_OPERATION_NAME = stringKey("gen_ai.operation.name");
-  private static final AttributeKey<List<String>> GEN_AI_REQUEST_ENCODING_FORMATS =
-      stringArrayKey("gen_ai.request.encoding_formats");
-  private static final AttributeKey<Double> GEN_AI_REQUEST_FREQUENCY_PENALTY =
-      doubleKey("gen_ai.request.frequency_penalty");
-  private static final AttributeKey<Long> GEN_AI_REQUEST_MAX_TOKENS =
-      longKey("gen_ai.request.max_tokens");
-  static final AttributeKey<String> GEN_AI_REQUEST_MODEL = stringKey("gen_ai.request.model");
-  private static final AttributeKey<Double> GEN_AI_REQUEST_PRESENCE_PENALTY =
-      doubleKey("gen_ai.request.presence_penalty");
-  private static final AttributeKey<Long> GEN_AI_REQUEST_SEED = longKey("gen_ai.request.seed");
-  private static final AttributeKey<List<String>> GEN_AI_REQUEST_STOP_SEQUENCES =
-      stringArrayKey("gen_ai.request.stop_sequences");
-  private static final AttributeKey<Double> GEN_AI_REQUEST_TEMPERATURE =
-      doubleKey("gen_ai.request.temperature");
-  private static final AttributeKey<Double> GEN_AI_REQUEST_TOP_K =
-      doubleKey("gen_ai.request.top_k");
-  private static final AttributeKey<Double> GEN_AI_REQUEST_TOP_P =
-      doubleKey("gen_ai.request.top_p");
-  private static final AttributeKey<List<String>> GEN_AI_RESPONSE_FINISH_REASONS =
-      stringArrayKey("gen_ai.response.finish_reasons");
-  private static final AttributeKey<String> GEN_AI_RESPONSE_ID = stringKey("gen_ai.response.id");
-  static final AttributeKey<String> GEN_AI_RESPONSE_MODEL = stringKey("gen_ai.response.model");
-  static final AttributeKey<String> GEN_AI_PROVIDER_NAME = stringKey("gen_ai.provider.name");
-  static final AttributeKey<Long> GEN_AI_USAGE_INPUT_TOKENS = longKey("gen_ai.usage.input_tokens");
-  static final AttributeKey<Long> GEN_AI_USAGE_OUTPUT_TOKENS =
-      longKey("gen_ai.usage.output_tokens");
 
   /** Creates the GenAI attributes extractor. */
   public static <REQUEST, RESPONSE> AttributesExtractor<REQUEST, RESPONSE> create(
@@ -86,6 +72,9 @@ public final class GenAiAttributesExtractor<REQUEST, RESPONSE>
     internalSet(attributes, GEN_AI_REQUEST_TEMPERATURE, getter.getRequestTemperature(request));
     internalSet(attributes, GEN_AI_REQUEST_TOP_K, getter.getRequestTopK(request));
     internalSet(attributes, GEN_AI_REQUEST_TOP_P, getter.getRequestTopP(request));
+    internalSet(attributes, GEN_AI_CONVERSATION_ID, getter.getConversationId(request));
+    internalSet(attributes, GEN_AI_REQUEST_CHOICE_COUNT, getter.getChoiceCount(request));
+    internalSet(attributes, GEN_AI_OUTPUT_TYPE, getter.getOutputType(request));
   }
 
   @Override

@@ -11,7 +11,7 @@ import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionMessage.Cha
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionMessage.Role;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionMessage.ToolCall;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionOutput.Choice;
-import io.opentelemetry.instrumentation.api.genai.MessageCaptureOptions;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.MessageCaptureOptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,7 +27,7 @@ final class ChatModelMessageBuffer {
   @Nullable private ChatCompletionFinishReason finishReason;
 
   @Nullable private StringBuilder rawContentBuffer;
-  
+
   @Nullable private String rawContent;
 
   @Nullable private Role role;
@@ -38,9 +38,8 @@ final class ChatModelMessageBuffer {
 
   @Nullable private Map<Integer, ToolCallBuffer> toolCalls;
 
-  ChatModelMessageBuffer(int index,
-      MessageCaptureOptions messageCaptureOptions,
-      boolean incrementalOutput) {
+  ChatModelMessageBuffer(
+      int index, MessageCaptureOptions messageCaptureOptions, boolean incrementalOutput) {
     this.index = index;
     this.messageCaptureOptions = messageCaptureOptions;
     this.incrementalOutput = incrementalOutput;
@@ -56,14 +55,18 @@ final class ChatModelMessageBuffer {
           if (entry.getValue().function.arguments != null) {
             arguments = entry.getValue().function.arguments.toString();
           }
-          toolCalls.add(new ToolCall(entry.getValue().id, entry.getValue().type,
-              new ChatCompletionFunction(entry.getValue().function.name, arguments)));
+          toolCalls.add(
+              new ToolCall(
+                  entry.getValue().id,
+                  entry.getValue().type,
+                  new ChatCompletionFunction(entry.getValue().function.name, arguments)));
         }
       }
     }
 
     String content = "";
-    // Type of content is String for DashScope: https://bailian.console.aliyun.com/#/api/?type=model&url=2712576
+    // Type of content is String for DashScope:
+    // https://bailian.console.aliyun.com/#/api/?type=model&url=2712576
     if (this.incrementalOutput) {
       if (this.rawContentBuffer != null) {
         content = this.rawContentBuffer.toString();
@@ -83,7 +86,8 @@ final class ChatModelMessageBuffer {
   void append(Choice choice) {
     if (choice.message() != null) {
       if (this.messageCaptureOptions.captureMessageContent()) {
-        // Type of content is String for DashScope: https://bailian.console.aliyun.com/#/api/?type=model&url=2712576
+        // Type of content is String for DashScope:
+        // https://bailian.console.aliyun.com/#/api/?type=model&url=2712576
         if (choice.message().rawContent() instanceof String) {
           if (this.incrementalOutput) {
             if (this.rawContentBuffer == null) {
@@ -91,9 +95,15 @@ final class ChatModelMessageBuffer {
             }
 
             String deltaContent = (String) choice.message().rawContent();
-            if (this.rawContentBuffer.length() < this.messageCaptureOptions.maxMessageContentLength()) {
-              if (this.rawContentBuffer.length() + deltaContent.length() >= this.messageCaptureOptions.maxMessageContentLength()) {
-                deltaContent = deltaContent.substring(0, this.messageCaptureOptions.maxMessageContentLength() - this.rawContentBuffer.length());
+            if (this.rawContentBuffer.length()
+                < this.messageCaptureOptions.maxMessageContentLength()) {
+              if (this.rawContentBuffer.length() + deltaContent.length()
+                  >= this.messageCaptureOptions.maxMessageContentLength()) {
+                deltaContent =
+                    deltaContent.substring(
+                        0,
+                        this.messageCaptureOptions.maxMessageContentLength()
+                            - this.rawContentBuffer.length());
                 this.rawContentBuffer.append(deltaContent).append(TRUNCATE_FLAG);
               } else {
                 this.rawContentBuffer.append(deltaContent);
@@ -103,7 +113,9 @@ final class ChatModelMessageBuffer {
             // for non-incremental output
             this.rawContent = (String) choice.message().rawContent();
             if (this.rawContent.length() > this.messageCaptureOptions.maxMessageContentLength()) {
-              this.rawContent = this.rawContent.substring(0, this.messageCaptureOptions.maxMessageContentLength());
+              this.rawContent =
+                  this.rawContent.substring(
+                      0, this.messageCaptureOptions.maxMessageContentLength());
               this.rawContent = this.rawContent + TRUNCATE_FLAG;
             }
           }
@@ -118,8 +130,7 @@ final class ChatModelMessageBuffer {
         for (int i = 0; i < choice.message().toolCalls().size(); i++) {
           ToolCall toolCall = choice.message().toolCalls().get(i);
           ToolCallBuffer buffer =
-              this.toolCalls.computeIfAbsent(
-                  i, unused -> new ToolCallBuffer(toolCall.id()));
+              this.toolCalls.computeIfAbsent(i, unused -> new ToolCallBuffer(toolCall.id()));
           if (toolCall.type() != null) {
             buffer.type = toolCall.type();
           }
@@ -128,7 +139,8 @@ final class ChatModelMessageBuffer {
             if (toolCall.function().name() != null) {
               buffer.function.name = toolCall.function().name();
             }
-            if (this.messageCaptureOptions.captureMessageContent() && toolCall.function().arguments() != null) {
+            if (this.messageCaptureOptions.captureMessageContent()
+                && toolCall.function().arguments() != null) {
               if (buffer.function.arguments == null) {
                 buffer.function.arguments = new StringBuilder();
               }

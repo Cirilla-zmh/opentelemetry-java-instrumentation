@@ -1,11 +1,16 @@
+/*
+ * Copyright The OpenTelemetry Authors
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 package io.opentelemetry.javaagent.instrumentation.spring.ai.alibaba.v1_0;
 
 import static java.util.Collections.emptyList;
 
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletion;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionRequest;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.GenAiAttributesGetter;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.incubating.GenAiIncubatingAttributes;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiAttributesGetter;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -82,8 +87,8 @@ enum ChatModelAttributesGetter
     if (request.parameters() == null || request.parameters().stop() == null) {
       return null;
     }
-    return request.parameters().stop()
-        .stream().map(
+    return request.parameters().stop().stream()
+        .map(
             s -> {
               if (s instanceof String) {
                 return s;
@@ -144,8 +149,7 @@ enum ChatModelAttributesGetter
 
   @Override
   @Nullable
-  public String getResponseId(
-      ChatCompletionRequest request, @Nullable ChatCompletion response) {
+  public String getResponseId(ChatCompletionRequest request, @Nullable ChatCompletion response) {
     if (response == null) {
       return null;
     }
@@ -154,8 +158,7 @@ enum ChatModelAttributesGetter
 
   @Override
   @Nullable
-  public String getResponseModel(
-      ChatCompletionRequest request, @Nullable ChatCompletion response) {
+  public String getResponseModel(ChatCompletionRequest request, @Nullable ChatCompletion response) {
     return null;
   }
 

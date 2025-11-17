@@ -6,8 +6,8 @@
 package io.opentelemetry.instrumentation.api.incubator.semconv.genai;
 
 import static io.opentelemetry.api.common.AttributeKey.stringKey;
-import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiAttributesExtractor.GEN_AI_USAGE_INPUT_TOKENS;
-import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiAttributesExtractor.GEN_AI_USAGE_OUTPUT_TOKENS;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_USAGE_INPUT_TOKENS;
+import static io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiIncubatingAttributes.GEN_AI_USAGE_OUTPUT_TOKENS;
 import static java.util.logging.Level.FINE;
 
 import com.google.auto.value.AutoValue;

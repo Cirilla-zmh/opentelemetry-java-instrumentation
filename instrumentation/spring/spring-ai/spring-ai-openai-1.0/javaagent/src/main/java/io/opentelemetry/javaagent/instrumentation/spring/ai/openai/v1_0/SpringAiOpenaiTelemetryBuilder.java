@@ -5,25 +5,18 @@
 
 package io.opentelemetry.javaagent.instrumentation.spring.ai.openai.v1_0;
 
-import io.opentelemetry.instrumentation.api.instrumenter.genai.ArmsGenAiAppTypeOnceOperationListener;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.ArmsGenAiMetrics;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletion;
-import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest;
 import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import io.opentelemetry.api.OpenTelemetry;
-import io.opentelemetry.instrumentation.api.arms.enums.ArmsRpcTypeEnum;
-import io.opentelemetry.instrumentation.api.genai.MessageCaptureOptions;
+import io.opentelemetry.api.logs.Logger;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiAttributesExtractor;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiMessagesExtractor;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.GenAiSpanNameExtractor;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.MessageCaptureOptions;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
-import io.opentelemetry.instrumentation.api.instrumenter.arms.common.ArmsCommonAttributeExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.arms.common.ArmsServiceTypeFactory;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.ArmsGenAiAttributesExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.GenAiAttributesExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.GenAiMessagesExtractor;
-import io.opentelemetry.instrumentation.api.instrumenter.genai.GenAiSpanNameExtractor;
+import org.springframework.ai.openai.api.OpenAiApi.ChatCompletion;
+import org.springframework.ai.openai.api.OpenAiApi.ChatCompletionRequest;
 
-/**
- * Builder for {@link SpringAiOpenaiTelemetry}.
- */
+/** Builder for {@link SpringAiOpenaiTelemetry}. */
 public final class SpringAiOpenaiTelemetryBuilder {
 
   private static final String INSTRUMENTATION_NAME = "io.opentelemetry.spring-ai-openai-1.0";
@@ -40,27 +33,21 @@ public final class SpringAiOpenaiTelemetryBuilder {
     this.openTelemetry = openTelemetry;
   }
 
-  /**
-   * Sets whether to capture message content in spans. Defaults to false.
-   */
+  /** Sets whether to capture message content in spans. Defaults to false. */
   @CanIgnoreReturnValue
   public SpringAiOpenaiTelemetryBuilder setCaptureMessageContent(boolean captureMessageContent) {
     this.captureMessageContent = captureMessageContent;
     return this;
   }
 
-  /**
-   * Sets the maximum length of message content to capture. Defaults to 8192.
-   */
+  /** Sets the maximum length of message content to capture. Defaults to 8192. */
   @CanIgnoreReturnValue
   public SpringAiOpenaiTelemetryBuilder setContentMaxLength(int contentMaxLength) {
     this.contentMaxLength = contentMaxLength;
     return this;
   }
 
-  /**
-   * Sets the strategy to capture message content. Defaults to "span-attributes".
-   */
+  /** Sets the strategy to capture message content. Defaults to "span-attributes". */
   @CanIgnoreReturnValue
   public SpringAiOpenaiTelemetryBuilder setCaptureMessageStrategy(String captureMessageStrategy) {
     this.captureMessageStrategy = captureMessageStrategy;
@@ -72,24 +59,24 @@ public final class SpringAiOpenaiTelemetryBuilder {
    * SpringAiOpenaiTelemetryBuilder}.
    */
   public SpringAiOpenaiTelemetry build() {
-    MessageCaptureOptions messageCaptureOptions = MessageCaptureOptions.create(
-        captureMessageContent, contentMaxLength, captureMessageStrategy);
+    MessageCaptureOptions messageCaptureOptions =
+        MessageCaptureOptions.create(
+            captureMessageContent, contentMaxLength, captureMessageStrategy);
 
+    Logger eventLogger = openTelemetry.getLogsBridge().get(INSTRUMENTATION_NAME);
     Instrumenter<ChatCompletionRequest, ChatCompletion> chatCompletionInstrumenter =
         Instrumenter.<ChatCompletionRequest, ChatCompletion>builder(
                 openTelemetry,
                 INSTRUMENTATION_NAME,
                 GenAiSpanNameExtractor.create(ChatModelAttributesGetter.INSTANCE))
-            .addAttributesExtractor(GenAiAttributesExtractor.create(ChatModelAttributesGetter.INSTANCE))
-            .addAttributesExtractor(ArmsGenAiAttributesExtractor.create(ChatModelAttributesGetter.INSTANCE))
-            .addAttributesExtractor(GenAiMessagesExtractor.create(
-                ChatModelAttributesGetter.INSTANCE,
-                ChatModelMessagesProvider.create(messageCaptureOptions),
-                messageCaptureOptions, INSTRUMENTATION_NAME))
-            .addAttributesExtractor(new ArmsCommonAttributeExtractor(ArmsRpcTypeEnum.LLM_CLIENT.getCode(),
-                ArmsServiceTypeFactory.LLM_INTERNAL.getCode()))
-            .addOperationListener(ArmsGenAiAppTypeOnceOperationListener.create())
-            .addOperationMetrics(ArmsGenAiMetrics.get())
+            .addAttributesExtractor(
+                GenAiAttributesExtractor.create(ChatModelAttributesGetter.INSTANCE))
+            .addAttributesExtractor(
+                GenAiMessagesExtractor.create(
+                    ChatModelAttributesGetter.INSTANCE,
+                    ChatModelMessagesProvider.create(messageCaptureOptions),
+                    messageCaptureOptions,
+                    eventLogger))
             .buildInstrumenter();
 
     return new SpringAiOpenaiTelemetry(chatCompletionInstrumenter, messageCaptureOptions);

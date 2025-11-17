@@ -12,7 +12,7 @@ import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionOutput.Choi
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.ChatCompletionRequest;
 import com.alibaba.cloud.ai.dashscope.api.DashScopeApi.TokenUsage;
 import io.opentelemetry.context.Context;
-import io.opentelemetry.instrumentation.api.genai.MessageCaptureOptions;
+import io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages.MessageCaptureOptions;
 import io.opentelemetry.instrumentation.api.instrumenter.Instrumenter;
 import java.util.ArrayList;
 import java.util.List;
@@ -120,14 +120,16 @@ public final class ChatModelStreamListener {
       outputTokens = (int) this.outputTokens.get();
     }
 
-    List<Choice> choices = this.chatModelMessageBuffers.stream()
-        .map(ChatModelMessageBuffer::toChoice)
-        .collect(Collectors.toList());
+    List<Choice> choices =
+        this.chatModelMessageBuffers.stream()
+            .map(ChatModelMessageBuffer::toChoice)
+            .collect(Collectors.toList());
 
-    ChatCompletion result = new ChatCompletion(
-        this.requestId.get(),
-        new ChatCompletionOutput(null, choices, null),
-        new TokenUsage(outputTokens, inputTokens, null, null, null, null, null, null, null));
+    ChatCompletion result =
+        new ChatCompletion(
+            this.requestId.get(),
+            new ChatCompletionOutput(null, choices, null),
+            new TokenUsage(outputTokens, inputTokens, null, null, null, null, null, null, null));
 
     if (this.newSpan) {
       this.instrumenter.end(this.context, this.request, result, error);
