@@ -20,6 +20,7 @@ public abstract class ToolCallRequestPart implements MessagePart {
 
   @JsonProperty(required = true, value = "type")
   @JsonPropertyDescription("The type of the content captured in this part")
+  @Override
   public abstract String getType();
 
   @JsonProperty(value = "id")

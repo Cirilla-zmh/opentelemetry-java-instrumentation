@@ -21,8 +21,8 @@ public interface GenAiToolAttributesGetter<REQUEST, RESPONSE>
   String getToolCallArguments(REQUEST request);
 
   @Nullable
-  String getToolCallId(REQUEST request, RESPONSE response);
+  String getToolCallId(REQUEST request, @Nullable RESPONSE response);
 
   @Nullable
-  String getToolCallResult(REQUEST request, RESPONSE response);
+  String getToolCallResult(REQUEST request, @Nullable RESPONSE response);
 }

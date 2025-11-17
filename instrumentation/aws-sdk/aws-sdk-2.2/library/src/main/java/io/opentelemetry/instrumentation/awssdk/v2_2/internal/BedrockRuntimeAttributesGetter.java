@@ -28,6 +28,12 @@ enum BedrockRuntimeAttributesGetter
     return BedrockRuntimeAccess.getOperationName(executionAttributes);
   }
 
+  @Nullable
+  @Override
+  public String getOperationTarget(ExecutionAttributes executionAttributes) {
+    return getRequestModel(executionAttributes);
+  }
+
   @Override
   public String getSystem(ExecutionAttributes executionAttributes) {
     return GenAiProviderNameIncubatingValues.AWS_BEDROCK;

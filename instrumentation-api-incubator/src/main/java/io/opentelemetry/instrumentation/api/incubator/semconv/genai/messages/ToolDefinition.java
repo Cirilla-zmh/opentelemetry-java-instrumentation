@@ -39,7 +39,7 @@ public abstract class ToolDefinition {
   }
 
   public static ToolDefinition create(
-      String type, String name, String description, Map<String, Object> parameters) {
+      String type, String name, @Nullable String description, @Nullable Map<String, Object> parameters) {
     return new AutoValue_ToolDefinition(type, name, description, parameters);
   }
 }

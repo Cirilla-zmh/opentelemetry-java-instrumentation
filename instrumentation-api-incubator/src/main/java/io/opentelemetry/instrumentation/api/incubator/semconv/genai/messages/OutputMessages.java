@@ -5,6 +5,7 @@
 
 package io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class OutputMessages {
     return new OutputMessages(new ArrayList<>(messages));
   }
 
+  @CanIgnoreReturnValue
   public OutputMessages append(OutputMessage outputMessage) {
     this.messages.add(outputMessage);
     return this;
@@ -64,8 +66,8 @@ public class OutputMessages {
     // If the chunk message has text parts, append their content to the first text part of existing
     // message
     for (MessagePart chunkPart : chunkMessage.getParts()) {
-      if (chunkPart instanceof io.opentelemetry.instrumentation.api.genai.messages.TextPart) {
-        io.opentelemetry.instrumentation.api.genai.messages.TextPart chunkTextPart =
+      if (chunkPart instanceof TextPart) {
+        TextPart chunkTextPart =
             (TextPart) chunkPart;
 
         // Find the first text part in existing message to append to

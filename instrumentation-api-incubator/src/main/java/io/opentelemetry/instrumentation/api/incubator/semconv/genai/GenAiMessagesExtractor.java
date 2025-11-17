@@ -72,7 +72,7 @@ public class GenAiMessagesExtractor<REQUEST, RESPONSE>
 
   private final ObjectMapper objectMapper = new ObjectMapper();
 
-  private io.opentelemetry.api.logs.Logger eventLogger;
+  private final io.opentelemetry.api.logs.Logger eventLogger;
 
   private GenAiMessagesExtractor(
       GenAiAttributesGetter<REQUEST, RESPONSE> getter,
@@ -203,14 +203,7 @@ public class GenAiMessagesExtractor<REQUEST, RESPONSE>
     }
   }
 
-  private <T> void internalSetLogAttribute(
-      LogRecordBuilder logRecordBuilder, AttributeKey<T> key, @Nullable T value) {
-    if (value == null) {
-      return;
-    }
-    logRecordBuilder.setAttribute(key, value);
-  }
-
+  @Nullable
   private String toJsonString(Object object) {
     try {
       return objectMapper.writeValueAsString(object);
@@ -218,5 +211,13 @@ public class GenAiMessagesExtractor<REQUEST, RESPONSE>
       LOGGER.log(Level.SEVERE, "failed to serialize messages as a json string", e);
       return null;
     }
+  }
+
+  private static <T> void internalSetLogAttribute(
+      LogRecordBuilder logRecordBuilder, AttributeKey<T> key, @Nullable T value) {
+    if (value == null) {
+      return;
+    }
+    logRecordBuilder.setAttribute(key, value);
   }
 }

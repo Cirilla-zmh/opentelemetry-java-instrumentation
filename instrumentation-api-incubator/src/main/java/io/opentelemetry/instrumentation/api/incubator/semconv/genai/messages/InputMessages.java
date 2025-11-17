@@ -5,6 +5,7 @@
 
 package io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class InputMessages {
     return new InputMessages(new ArrayList<>(messages));
   }
 
+  @CanIgnoreReturnValue
   public InputMessages append(InputMessage inputMessage) {
     this.messages.add(inputMessage);
     return this;

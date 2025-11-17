@@ -20,4 +20,6 @@ public final class AgentIncubatingAttributes {
 
   public static final AttributeKey<String> GEN_AI_DATA_SOURCE_ID =
       stringKey("gen_ai.data_source.id");
+
+  private AgentIncubatingAttributes() {}
 }

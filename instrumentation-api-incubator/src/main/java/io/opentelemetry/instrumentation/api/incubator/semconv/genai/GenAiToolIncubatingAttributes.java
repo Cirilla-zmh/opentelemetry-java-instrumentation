@@ -20,4 +20,6 @@ public class GenAiToolIncubatingAttributes {
       stringKey("gen_ai.tool.call.arguments");
   public static final AttributeKey<String> GEN_AI_TOOL_CALL_RESULT =
       stringKey("gen_ai.tool.call.result");
+
+  private GenAiToolIncubatingAttributes() {}
 }

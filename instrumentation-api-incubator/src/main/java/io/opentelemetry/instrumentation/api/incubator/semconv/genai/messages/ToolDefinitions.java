@@ -5,6 +5,7 @@
 
 package io.opentelemetry.instrumentation.api.incubator.semconv.genai.messages;
 
+import com.google.errorprone.annotations.CanIgnoreReturnValue;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ public class ToolDefinitions {
     return new ToolDefinitions(new ArrayList<>(toolDefinitions));
   }
 
+  @CanIgnoreReturnValue
   public ToolDefinitions append(ToolDefinition toolDefinition) {
     this.toolDefinitions.add(toolDefinition);
     return this;

@@ -17,4 +17,6 @@ public final class ReactorSubscribeOnProcessTracing {
           return "otel_context_propagation";
         }
       };
+
+  private ReactorSubscribeOnProcessTracing() {}
 }

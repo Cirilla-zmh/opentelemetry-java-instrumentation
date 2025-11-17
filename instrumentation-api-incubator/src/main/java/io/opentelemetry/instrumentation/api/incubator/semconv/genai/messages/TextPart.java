@@ -19,6 +19,7 @@ public abstract class TextPart implements MessagePart {
 
   @JsonProperty(required = true, value = "type")
   @JsonPropertyDescription("The type of the content captured in this part")
+  @Override
   public abstract String getType();
 
   @JsonProperty(required = true, value = "content")

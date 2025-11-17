@@ -67,6 +67,8 @@ public final class GenAiIncubatingAttributes {
     public static final String GENERATE_CONTENT = "generate_content";
     public static final String INVOKE_AGENT = "invoke_agent";
     public static final String TEXT_COMPLETION = "text_completion";
+
+    private GenAiOperationNameIncubatingValues() {}
   }
 
   public static class GenAiProviderNameIncubatingValues {
@@ -86,10 +88,16 @@ public final class GenAiIncubatingAttributes {
     public static final String PERPLEXITY = "perplexity";
     public static final String X_AI = "x_ai";
     public static final String DASHSCOPE = "dashscope";
+
+    private GenAiProviderNameIncubatingValues() {}
   }
 
   public static class GenAiEventName {
     public static final String GEN_AI_CLIENT_INFERENCE_OPERATION_DETAILS =
         "gen_ai.client.inference.operation.details";
+
+    private GenAiEventName() {}
   }
+
+  private GenAiIncubatingAttributes() {}
 }
